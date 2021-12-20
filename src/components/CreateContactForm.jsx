@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { APIEndpoints } from "../config"
 
-function CreateContactForm (props) {
+const CreateContactForm = props => {
   const { contacts } = props;
   
   const [newContact, setNewContact] = useState({
@@ -43,6 +43,7 @@ function CreateContactForm (props) {
         },
         body: JSON.stringify({...newContact, addressId: addressId})
       })
+      setSubmit(false);
     }
   }, [submit])
 

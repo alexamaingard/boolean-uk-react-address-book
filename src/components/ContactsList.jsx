@@ -1,13 +1,5 @@
-function ContactsList(props) {
-  const { contacts, hideForm, setHideForm } = props;
-
-  const handleViewClick = event => {
-    //console.log(event.target);
-  }
-
-  const handleEditClick = event => {
-    //console.log(event.target);
-  }
+const ContactsList = props => {
+  const { contacts, hideForm, setHideForm, hideEditForm, setHideEditForm, setContact, hideContact, setHideContact } = props;
 
   return (
     <aside className="contacts-section light-shadow">
@@ -25,17 +17,24 @@ function ContactsList(props) {
           const { firstName, lastName, address } = contact;
 
           return (
-            <li key={index}>
+            <li key={index} >
               <h3>
                 {firstName} {lastName}
               </h3>
               <button
                 className="button new-contact-btn"
-                onClick={handleViewClick}
+                onClick={() => {
+                  setContact(contact);
+                  setHideContact(!hideContact);
+                }}
               >View</button>
               <button
                 className="button new-contact-btn"
-                onClick={handleEditClick}
+                id={contact.id}
+                onClick={() => {
+                  setContact(contact);
+                  setHideEditForm(!hideEditForm);
+                }}
               >Edit</button>
             </li>
           );
