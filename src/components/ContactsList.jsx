@@ -1,6 +1,14 @@
 function ContactsList(props) {
   const { contacts, hideForm, setHideForm } = props;
 
+  const handleViewClick = event => {
+    //console.log(event.target);
+  }
+
+  const handleEditClick = event => {
+    //console.log(event.target);
+  }
+
   return (
     <aside className="contacts-section light-shadow">
       <header>
@@ -12,7 +20,7 @@ function ContactsList(props) {
           {hideForm ? "Create" : "Cancel"}
         </button>
       </header>
-      <ul>
+      <ul className="contacts-list">
         {contacts.map((contact, index) => {
           const { firstName, lastName, address } = contact;
 
@@ -21,9 +29,14 @@ function ContactsList(props) {
               <h3>
                 {firstName} {lastName}
               </h3>
-              <p>
-                {address.street}, {address.postCode}
-              </p>
+              <button
+                className="button new-contact-btn"
+                onClick={handleViewClick}
+              >View</button>
+              <button
+                className="button new-contact-btn"
+                onClick={handleEditClick}
+              >Edit</button>
             </li>
           );
         })}
