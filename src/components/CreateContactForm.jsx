@@ -1,8 +1,11 @@
 import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { APIEndpoints } from "../config"
 
 const CreateContactForm = props => {
-  const { contacts } = props;
+  const { contacts, setContact, setContacts } = props;
+
+  const navigate = useNavigate();
   
   const [newContact, setNewContact] = useState({
       firstName: "",
@@ -22,6 +25,8 @@ const CreateContactForm = props => {
     if(submit)  {
       const found = contacts.find(contact => contact.address.street === newContactAddress.street);
       let addressId;
+      let id;
+      let contact;
       if (found) {
         addressId = found.addressId;
       } 
@@ -36,14 +41,22 @@ const CreateContactForm = props => {
         .then(res => res.json())
         .then(value => addressId = value.id)
       }
-      await fetch(APIEndpoints.contacts, {
+      const res = await fetch(APIEndpoints.contacts, {
         method: "POST",
         headers: {
           "Content-Type": "application/json"
         },
         body: JSON.stringify({...newContact, addressId: addressId})
       })
+      const data = await res.json();
+      id = data.id;
+      contact = data;
+      const resp = await fetch(APIEndpoints.contacts);
+      const newData = await resp.json();
+      setContacts(newData);
       setSubmit(false);
+      setContact({...newContact, address: {...newContactAddress}});
+      navigate(`/view/${contact.id}`, {replace: true});
     }
   }, [submit])
 
@@ -117,7 +130,6 @@ const CreateContactForm = props => {
           id="block-checkbox" 
           name="blockContact" 
           type="checkbox" 
-          value={newContact.blockContact}
           checked={newContact.blockContact}
           onChange={handleChange}
         />

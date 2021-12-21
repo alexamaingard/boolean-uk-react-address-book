@@ -1,15 +1,19 @@
+import { useNavigate } from "react-router-dom";
+
 const ContactsList = props => {
-  const { contacts, hideForm, setHideForm, hideEditForm, setHideEditForm, setContact, hideContact, setHideContact } = props;
+  const { contacts, setContact } = props;
+
+  const navigate = useNavigate();
 
   return (
     <aside className="contacts-section light-shadow">
       <header>
         <h2>Contacts</h2>
         <button
-          onClick={() => setHideForm(!hideForm)}
+          onClick={() => navigate("/createContact", {replace: true})}
           className="button new-contact-btn"
         >
-          {hideForm ? "Create" : "Cancel"}
+          Create
         </button>
       </header>
       <ul className="contacts-list">
@@ -25,15 +29,14 @@ const ContactsList = props => {
                 className="button new-contact-btn"
                 onClick={() => {
                   setContact(contact);
-                  setHideContact(!hideContact);
+                  navigate(`/view/${contact.id}`, {replace: true});
                 }}
               >View</button>
               <button
                 className="button new-contact-btn"
-                id={contact.id}
                 onClick={() => {
                   setContact(contact);
-                  setHideEditForm(!hideEditForm);
+                  navigate(`/editContact/${contact.id}`, {replace: true});
                 }}
               >Edit</button>
             </li>

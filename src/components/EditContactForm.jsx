@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { APIEndpoints } from "../config"
 
 const EditContactForm = props => {
-    const { contact, setContacts, contacts } = props;
+    const { contact, setContacts, contacts, setContact } = props;
 
     const [updateContact, setUpdateContact] = useState({
             firstName: contact.firstName,
@@ -11,14 +11,19 @@ const EditContactForm = props => {
             blockContact: contact.blockContact
         });
     const [updateAddress, setUpdateAddress] = useState({
-            street: contact.street,
-            city: contact.city,
-            postCode: contact.postCode
+            street: contact.address.street,
+            city: contact.address.city,
+            postCode: contact.address.postCode
         });
     const [submit, setSubmit] = useState(false);
     const [deleteContact, setDeleteContact] = useState(false);
 
     const navigate = useNavigate();
+
+    useEffect(() => {
+        setUpdateContact(contact);
+        setUpdateAddress(contact.address);
+    }, [contact])
 
     useEffect(async () => {
         if(submit){
@@ -35,11 +40,12 @@ const EditContactForm = props => {
                     "Content-Type": "application/json"
                 },
                 body: JSON.stringify(updateContact)
-            })
-            await fetch(APIEndpoints.contacts)
-            .then(res => res.json())
-            .then(data => setContacts(data))
+            });
+            const res = await fetch(APIEndpoints.contacts);
+            const data = await res.json();
+            setContacts(data);
             setSubmit(false);
+            setContact({...updateContact, address: {...updateAddress}});
             navigate(`/view/${contact.id}`, {replace: true});
         }
     }, [submit])
@@ -50,6 +56,10 @@ const EditContactForm = props => {
                 method: "DELETE"
             });
             setDeleteContact(false);
+            const res = await fetch(APIEndpoints.contacts);
+            const data = await res.json();
+            setContacts(data);
+            navigate("/", {replace: true});
         }
     }, [deleteContact])
 
@@ -87,7 +97,7 @@ const EditContactForm = props => {
                 id="first-name-input" 
                 name="firstName" 
                 type="text" 
-                placeholder={contact.firstName}
+                value={updateContact.firstName}
                 onChange={handleChange}
             />
             <label htmlFor="last-name-input">Last Name:</label>
@@ -95,7 +105,7 @@ const EditContactForm = props => {
                 id="last-name-input" 
                 name="lastName" 
                 type="text" 
-                value={contact.lastName}
+                value={updateContact.lastName}
                 onChange={handleChange}
             />
             <label htmlFor="street-input">Street:</label>
@@ -103,7 +113,7 @@ const EditContactForm = props => {
                 id="street-input" 
                 name="street" 
                 type="text" 
-                value={contact.address.street}
+                value={updateAddress.street}
                 onChange={handleChange}
             />
             <label htmlFor="city-input">City:</label>
@@ -111,7 +121,7 @@ const EditContactForm = props => {
                 id="city-input" 
                 name="city" 
                 type="text" 
-                value={contact.address.city}
+                value={updateAddress.city}
                 onChange={handleChange}
             />
             <label htmlFor="post-code-input">Post Code:</label>
@@ -119,7 +129,7 @@ const EditContactForm = props => {
                 id="post-code-input" 
                 name="postCode" 
                 type="text" 
-                value={contact.address.postCode}
+                value={updateAddress.postCode}
                 onChange={handleChange}
             />
             <div className="checkbox-section">
@@ -127,7 +137,7 @@ const EditContactForm = props => {
                     id="block-checkbox" 
                     name="blockContact" 
                     type="checkbox" 
-                    checked={contact.blockContact}
+                    checked={updateContact.blockContact}
                     onChange={handleChange}
                 />
                 <label htmlFor="block-checkbox">Block</label>
@@ -135,10 +145,11 @@ const EditContactForm = props => {
             <div className="actions-section">
                 <button className="button blue" type="submit">Update</button>
                 <button 
-                    className="button blue" 
-                    type="submit"
+                    className="button blue center" 
                     onClick={handleDelete}
-                >Delete</button>
+                    type="button"
+                    >Delete
+                </button>
             </div>
         </form>
     )
